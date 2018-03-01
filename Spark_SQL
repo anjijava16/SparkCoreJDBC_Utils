@@ -1,0 +1,69 @@
+import org.apache.spark.sql.functions
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.udf
+import org.apache.spark.{SparkConf,SparkContext}
+import org.apache.spark.sql.hive.HiveContext
+import java.util.Properties
+import org.apache.spark.sql.SparkSession
+
+val prop=new Properties
+prop.setProperty("user","root");
+prop.setProperty("password","root");
+val query="(select order_id,order_date,order_customer_id,order_status from retail_db.orders ) as subset";
+
+val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+df.write.option("delimiter", "\t").csv("/user/iwinneretl/data/orders13");
+ 
+hadoop fs -cat /user/iwinneretl/data/orders13/part-00000-4f557225-81df-4c79-b58a-3b5e130ef77b.csv
+
+
+ 
+prop.setProperty("spark.sql.dialect","sql");
+prop.setProperty("img","com.mysql.jdbc.Driver");
+val spark=SparkSession.builder().appName("Test SQL").getOrCreate()
+
+/** 
+
+ `order_id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_date` datetime NOT NULL,
+  `order_customer_id` int(11) NOT NULL,
+  `order_status` varchar(45) NOT NULL,
+
+Every derived table must have its own alias
+
+val query="(select order_id,order_date,order_customer_id,order_status from retail_db.orders ) as subset";
+
+ val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+ 
+ 
+val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db"
+,query,prop)
+jdbc:mysql://localhost:3306/iexam
+com.mysql.jdbc.Driver
+
+
+
+cala> :history
+1409  val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+  val prop=new Properties
+  prop.setProperty("user","root");
+  prop.setProperty("password","root");
+1413  val query="""(select order_id,order_date,order_customer_id,order_status from retail_db.orders limit 20)""";
+1414  val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+1415  val query="""(select *  from retail_db.orders as orders )""";
+1416  val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+1417  val query=$"""select order_id,order_date,order_customer_id,order_status from retail_db.orders """;
+1418  val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+1419  val query="""select order_id,order_date,order_customer_id,order_status from retail_db.orders """;
+1420  val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+1421  val query="(select order_id,order_date,order_customer_id,order_status from retail_db.orders )";
+1422  val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+1423  val query="(select order_id,order_date,order_customer_id,order_status from retail_db.orders ) as subset";
+1424  val df=spark.read.jdbc("jdbc:mysql://localhost:3306/retail_db",query,prop);
+1425  df.printschema
+1426  df.printSchema
+1427  df.write.csv("/user/iwinneretl/data/orders");
+1428  :history
+
+scala> 
+*/
